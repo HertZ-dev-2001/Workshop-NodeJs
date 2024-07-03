@@ -3,6 +3,7 @@ const { getNextSequence } = require("../utils/database/IdCounter");
 
 const productSchema = new mongoose.Schema(
   {
+    productImage: { type: String, require: true },
     productNumber: { type: Number, default: 0 },
     productName: { type: String, require: true },
     productDetail: { type: String, default: null },

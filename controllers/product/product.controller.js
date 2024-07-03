@@ -1,5 +1,6 @@
 const express = require("express");
 const productModel = require("../../models/product.model");
+const path = require("path");
 
 const listProducts = async (req, res) => {
   try {
@@ -7,6 +8,8 @@ const listProducts = async (req, res) => {
 
     const formattedListProducts = listProducts.map((product, index) => {
       return {
+        _id: product._id,
+        productImage: product.productImage,
         productNumber: product.productNumber,
         productName: product.productName,
         productDetail: product.productDetail,
@@ -33,7 +36,11 @@ const createProduct = async (req, res) => {
     if (req.body) {
       const { productName, productDetail, productPrice, productAmount } =
         req.body;
+      const imagePath = req.file.path;
+      const imageName = path.basename(imagePath);
+      const publicPath = `/public/images/${imageName}`;
       const product = {
+        productImage: publicPath,
         productName: productName,
         productDetail: productDetail,
         productPrice: productPrice,
@@ -60,12 +67,27 @@ const editProduct = async (req, res) => {
       const { id } = req.params;
       const { productName, productDetail, productPrice, productAmount } =
         req.body;
-      await productModel.findByIdAndUpdate(id, {
+
+      let publicPath;
+      if (req.file) {
+        const imagePath = req.file.path;
+        const imageName = path.basename(imagePath);
+        publicPath = `/public/images/${imageName}`;
+      }
+
+      const updateData = {
         productName: productName,
         productDetail: productDetail,
         productPrice: productPrice,
         productAmount: productAmount,
-      });
+      };
+
+      if (publicPath) {
+        updateData.productImage = publicPath;
+      }
+
+      await productModel.findByIdAndUpdate(id, updateData);
+
       return res
         .status(201)
         .json({ status: 201, message: "Edit product success." });

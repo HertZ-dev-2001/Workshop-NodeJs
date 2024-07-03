@@ -1,6 +1,6 @@
 const {
   verifyAccessToken,
-} = require("../services/authentication/tokenGenerate");
+} = require("../services/authentication/tokenManagement");
 
 const validateToken = (req, res, next) => {
   try {

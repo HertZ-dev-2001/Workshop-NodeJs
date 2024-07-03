@@ -10,10 +10,6 @@ const {
 
 const loginAdmin = async (req, res) => {
   try {
-    const numbers = [2, 4, 6, 8];
-    for (const number in numbers) {
-      console.log(number);
-    }
     if (req.body) {
       const { email, password } = req.body;
       const isEmailExist = await adminModel.exists({ email: email });
@@ -32,12 +28,14 @@ const loginAdmin = async (req, res) => {
             status: 202,
             message: "Login success.",
             token: accessToken,
+            username: admin.firstName + " " + admin.lastName,
           });
         }
-        if (admin.approval === false) {
-          return res
-            .status(200)
-            .json({ status: 200, message: "Admin is not already approved." });
+        if (isPasswordCorrect && admin.approval === false) {
+          return res.status(200).json({
+            status: 200,
+            message: "Admin is not already approved.",
+          });
         } else {
           return res
             .status(200)
